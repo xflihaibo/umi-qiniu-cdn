@@ -1,6 +1,7 @@
 {
-  "name": "umi-cdn",
+  "name": "umi-qiniu-cdn",
   "main": "lib/index.js",
+  "version": "1.0.6",
   "description": "peiject",
   "authors": {
     "name": "xingfushihuangzhe",

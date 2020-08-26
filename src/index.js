@@ -1,12 +1,8 @@
-// ref:
-// - https://umijs.org/plugins/api
-
 const qiniu = require('qiniu');
 const fs = require('fs');
 const path = require('path');
 
 const configGlobal = {
-  // cdn: 'qiniu', // qiniu ，aliyun
   publicPath: 'http://qiniu.liahaoren.com/',
   config: {
     accessKey: 'LHUmMTrNeAjZAnOio7RxdDDfrBOC2FBdA-vyciCZ',
@@ -48,7 +44,7 @@ const uploadFun = (api, configGlobal, fileList) => {
   var formUploader = new qiniu.form_up.FormUploader(config);
   var putExtra = new qiniu.form_up.PutExtra();
   // 文件上传
-  api.logger.info(fileList);
+  // api.logger.info(fileList);
   Array.isArray(fileList) &&
     fileList.forEach((item, key) => {
       formUploader.putFile(
@@ -61,34 +57,31 @@ const uploadFun = (api, configGlobal, fileList) => {
             throw respErr;
           }
           if (respInfo.statusCode == 200) {
-            api.logger.info(respBody);
+            api.logger.info('successs!!');
           } else {
-            api.logger.info(respBody);
+            // api.logger.info(respBody);
           }
         },
       );
     });
 };
 
-export default api => {
-  api.modifyPublicPathStr(() => {
-    return api.config.publicPath || '/';
-  });
-
+export default (api, opts) => {
+  //打包结束后的
   api.onBuildComplete(async ({ err }) => {
     if (!err) {
+      // api.logger.info('onBuildComplete', api, opts);
       displayFile(api, api.paths.absOutputPath);
     }
   });
-
+  //插入HtmL 代码
   api.modifyProdHTMLContent(async (content, args) => {
     const { route } = args;
-    api.logger.info('modifyProdHTMLContent', typeof content);
+    // api.logger.info('modifyProdHTMLContent', typeof content);
     let newContent = content
-      .replace(/src=\"/g, 'src="http://qiniu.liahaoren.com')
-      .replace(/href=\"/g, 'src="http://qiniu.liahaoren.com');
+      .replace(/src=\"\//g, 'src="http://qiniu.liahaoren.com/')
+      .replace(/href=\"\//g, 'href="http://qiniu.liahaoren.com/');
 
-    api.logger.info('modifyProdHTMLContent', newContent);
     return newContent;
   });
 };
